@@ -157,7 +157,7 @@ function Products({ history }) {
 							)
 
 						}
-						<Image src={livePreview} alt="product" loading="lazy" />
+						<Image src={livePreview} alt="product" sx={{ width: "70%", margin: "0 auto", padding: "10px", borderRadius: "10px" }} loading="lazy" />
 
 						<FormControl FormControl >
 							<FormLabel>Thumbnail</FormLabel>

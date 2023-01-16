@@ -24,7 +24,7 @@ function Profile({ history }) {
 						<Box ml={3}>
 							{
 								user.Addresses.map((address, index) => {
-									delete address.Id
+									 
 									return (
 										<Box key={index}>
 											{Object.keys(address).map(key =>

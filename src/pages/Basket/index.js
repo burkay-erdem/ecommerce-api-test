@@ -28,6 +28,7 @@ function Basket() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const initialRef = useRef();
 	const { loggedIn, user } = useAuth();
+	console.log('user: ', user);
 	const { items, removeFromBasket, emptyBasket } = useBasket();
 	console.log('items: ', items);
 
