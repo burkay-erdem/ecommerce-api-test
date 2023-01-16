@@ -1,10 +1,35 @@
 import { useAuth } from "../../contexts/AuthContext";
 
-import { Text, Button, Box } from "@chakra-ui/react";
+import { Text, Button, Box, useDisclosure, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Modal, FormControl, FormLabel } from "@chakra-ui/react";
 
+import { useEffect, useRef, useState } from "react";
+import { Input } from "antd";
+import { fetchMe, postAddress } from "../../api";
+
+const addressDTO = {
+	name: "",
+	firstName: "",
+	lastName: "",
+	email: "",
+	company: "",
+	country: "",
+	city: "",
+	address1: "",
+	address2: "",
+	zipPostalCode: "",
+	phoneNumber: ""
+}
 
 function Profile({ history }) {
-	const { user, logout } = useAuth();
+
+	const { user, logout, setUser } = useAuth();
+
+
+	const [address, setAddress] = useState(addressDTO);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	const initialRef = useRef();
+
 
 	const handleLogout = async () => {
 		localStorage.clear();
@@ -12,6 +37,18 @@ function Profile({ history }) {
 			history.push("/");
 		});
 	};
+	const handleChange = (e) => {
+		const { name, value } = e.target
+		setAddress(prev => ({ ...prev, [name]: value }))
+	}
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		await postAddress(address);
+		const me = await fetchMe()
+		setUser(me)
+	}
 
 	return (
 		<div>
@@ -24,7 +61,6 @@ function Profile({ history }) {
 						<Box ml={3}>
 							{
 								user.Addresses.map((address, index) => {
-									 
 									return (
 										<Box key={index}>
 											{Object.keys(address).map(key =>
@@ -35,9 +71,7 @@ function Profile({ history }) {
 										</Box>
 									)
 								})
-
 							}
-
 						</Box>
 					</Box>
 					{/* <code>{JSON.stringify(user)}</code> */}
@@ -45,7 +79,49 @@ function Profile({ history }) {
 			}
 
 
+			<Button mt="2" size="sm" colorScheme="green" onClick={(e) => { onOpen(e); setAddress(addressDTO); }}>
+				Order
+			</Button>
 
+			<Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalHeader>Order</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody pb={6}>
+
+						<Box my={5} textAlign="left">
+							<form onSubmit={handleSubmit}>
+								{
+									Object.keys(address).map(key =>
+										<FormControl key={key}>
+											<FormLabel>{key}</FormLabel>
+											<Input
+												name={key}
+												onChange={handleChange}
+
+											/>
+
+										</FormControl>
+
+									)
+								}
+
+
+
+								<Button mt="4" width="full" type="submit">
+									Save
+								</Button>
+							</form>
+						</Box>
+					</ModalBody>
+
+					<ModalFooter>
+
+						<Button onClick={onClose}>Cancel</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 			<br />
 			<br />
 			<Button colorScheme="pink" variant="solid" onClick={handleLogout}>

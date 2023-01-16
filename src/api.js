@@ -92,7 +92,7 @@ export const createProduct = async ({ productData, productPictureData }) => {
 	);
 	console.log('data: ', data);
 	if (productPictureData) {
-		const res = fetchProductImage(data.Id,productPictureData)
+		const res = fetchProductImage(data.Id, productPictureData)
 	}
 
 	return data;
@@ -105,7 +105,7 @@ export const editProduct = async ({ productData, productPictureData }) => {
 
 	if (productPictureData) {
 		console.log('productPictureData: ', productPictureData);
-		const res = fetchProductImage(productData.Id,productPictureData)
+		const res = fetchProductImage(productData.Id, productPictureData)
 	}
 	return data;
 };
@@ -153,3 +153,10 @@ export const fetchStatistic = async () => {
 	return data;
 };
 
+
+export const postAddress = async (input) => {
+
+	const { data } = await axios.post(`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Me/AddAddress`, JSON.stringify(input));
+
+	return data;
+};

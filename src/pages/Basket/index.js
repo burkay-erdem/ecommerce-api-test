@@ -28,20 +28,14 @@ function Basket() {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const initialRef = useRef();
 	const { loggedIn, user } = useAuth();
-	console.log('user: ', user);
+	
 	const { items, removeFromBasket, emptyBasket } = useBasket();
-	console.log('items: ', items);
+	
 
 	const total = items.reduce((acc, obj) => acc + obj.price, 0);
 
 	const handleSubmitForm = async (addressId) => {
-		console.log('addressId: ', addressId);
-		// const itemproductIds = items.map((item) => item.ProductId);
-
-		// const input = {
-		// 	address,
-		// 	items: JSON.stringify(itemproductIds),
-		// };
+ 
 
 		await postOrder(addressId);
 

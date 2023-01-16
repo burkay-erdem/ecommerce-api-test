@@ -104,29 +104,27 @@ function Products({ history }) {
 			{
 				title: "Action",
 				key: "action",
-				render: (text, record) => (
-					<>
-						<Link to={`/admin/products/edit/${record.Id}`}>Edit</Link>
-						<Popconfirm
-							title="Are you sure?"
-							onConfirm={() => {
-								deleteMutation.mutate(record.Id, {
-									onSuccess: () => {
-										console.log("success");
-									},
-								});
-							}}
-							onCancel={() => console.log("iptal edildi")}
-							okText="Yes"
-							cancelText="No"
-							placement="left"
-						>
-							<a href="/#" style={{ marginLeft: 10 }}>
-								Delete
-							</a>
-						</Popconfirm>
-					</>
-				),
+				render: (text, record) => (<>
+					<Link to={`/admin/products/edit/${record.Id}`}>Edit</Link>
+					<Popconfirm
+						title="Are you sure?"
+						onConfirm={() => {
+							deleteMutation.mutate(record.Id, {
+								onSuccess: () => {
+									console.log("success");
+								},
+							});
+						}}
+						onCancel={() => console.log("iptal edildi")}
+						okText="Yes"
+						cancelText="No"
+						placement="left"
+					>
+						<a href="/#" style={{ marginLeft: 10 }}>
+							Delete
+						</a>
+					</Popconfirm>
+				</>),
 			},
 		];
 	}, []);
