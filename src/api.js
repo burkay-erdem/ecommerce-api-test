@@ -75,6 +75,7 @@ export const fetchProduct = async (id) => {
 
 
 
+
 export const deleteProduct = async (product_id) => {
 	const { data } = await axios.delete(
 		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product?key=${product_id}`
@@ -83,19 +84,38 @@ export const deleteProduct = async (product_id) => {
 	return data;
 };
 
-export const createProduct = async (postData) => {
+export const createProduct = async ({ productData, productPictureData }) => {
 	const { data } = await axios.post(
 		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product`,
-		JSON.stringify(postData)
+		JSON.stringify(productData)
+
 	);
+	console.log('data: ', data);
+	if (productPictureData) {
+		const res = fetchProductImage(data.Id,productPictureData)
+	}
 
 	return data;
 };
-export const editProduct = async (postData) => {
+export const editProduct = async ({ productData, productPictureData }) => {
 	const { data } = await axios.put(
 		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product`,
-		JSON.stringify(postData)
+		JSON.stringify(productData)
 	);
+
+	if (productPictureData) {
+		console.log('productPictureData: ', productPictureData);
+		const res = fetchProductImage(productData.Id,productPictureData)
+	}
+	return data;
+};
+export const fetchProductImage = async (id, picture = null) => {
+	console.log('picture: ', picture);
+	const { data } = await axios.post(
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product/(${id})/CreateProductPicture`,
+		JSON.stringify(picture)
+	);
+
 	return data;
 };
 
@@ -116,14 +136,19 @@ export const fetchOrders = async () => {
 };
 
 
-export const postBasket = async ({productId,quantity}) => {
- 
+export const postBasket = async ({ productId, quantity }) => {
+
 	const { data } = await axios.get(`${process.env.REACT_APP_BASE_ENDPOINT}/odata/ShoppingCart/AddToCart?productId=${productId}&quantity=${quantity}`);
 
 	return data;
 };
 export const fetchBasket = async () => {
 	const { data } = await axios.get(`${process.env.REACT_APP_BASE_ENDPOINT}/odata/ShoppingCart/Me`);
+
+	return data;
+};
+export const fetchStatistic = async () => {
+	const { data } = await axios.get(`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Dashboard/Statistics`);
 
 	return data;
 };

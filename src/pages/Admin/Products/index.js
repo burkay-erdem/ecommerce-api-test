@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { fetchProductList, deleteProduct, createProduct, editProduct, fetchProduct } from "../../../api";
+import { fetchProductList, deleteProduct, createProduct, editProduct, fetchProduct, fetchProductImage } from "../../../api";
 import { Link, useParams } from "react-router-dom";
-import { Button, FormControl, FormLabel, Input, Text } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Image, Input, Text } from "@chakra-ui/react";
 import { Table, Popconfirm } from "antd";
 function Products({ history }) {
 	const queryClient = useQueryClient();
@@ -16,34 +16,48 @@ function Products({ history }) {
 		// Picture: ''
 	}
 
+	const [productData, setProductData] = useState(productDTO)
+	const [productPictureData, setProductPictureData] = useState(null)
+	const [livePreview, setLivePreview] = useState(null)
+
 
 	const convertBase64 = (file) => {
 		return new Promise((resolve, reject) => {
 			const fileReader = new FileReader();
 			fileReader.readAsDataURL(file);
-	
+
 			fileReader.onload = () => {
 				resolve(fileReader.result);
 			};
-	
+
 			fileReader.onerror = (error) => {
 				reject(error);
 			};
 		});
 	};
-	
+
 	const uploadImage = async (event) => {
 		const file = event.target.files[0];
 		console.log('file: ', file);
 		const base64 = await convertBase64(file);
 		const type = file.type
+		setLivePreview(base64);
 		const pictureBinary = base64.split(',')[1]
-		 
+		setProductPictureData({
+			pictureBinary: pictureBinary,
+			mimeType: type
+		})
 	};
-	const [productData, setProductData] = useState(productDTO)
 	useEffect(() => {
 		if (params.id) {
 			fetchProduct(params.id).then(res => {
+				console.log('res: ', res);
+
+				if (res.Pictures.length) {
+					const preview = process.env.REACT_APP_BASE_ENDPOINT + res.Pictures[0].Url
+					setLivePreview(preview)
+
+				}
 				delete res.Id
 				delete res.Pictures
 				setProductData(res)
@@ -143,6 +157,7 @@ function Products({ history }) {
 							)
 
 						}
+						<Image src={livePreview} alt="product" loading="lazy" />
 
 						<FormControl FormControl >
 							<FormLabel>Thumbnail</FormLabel>
@@ -153,17 +168,19 @@ function Products({ history }) {
 								type="file"
 							/>
 						</FormControl>
+
 						<Button mt="4" width="full" type="submit"
 							onClick={() => {
 								if (params.action === 'create') {
-									createMutation.mutate(productData, {
+									createMutation.mutate({ productData, productPictureData }, {
 										onSuccess: () => {
 											history.push("/admin/products");
 										},
 									});
 								}
 								if (params.action === 'edit') {
-									editMutation.mutate({ ...productData, Id: params.id }, {
+									const editData = { ...productData, Id: params.id }
+									editMutation.mutate({ productData: editData, productPictureData }, {
 										onSuccess: () => {
 											history.push("/admin/products");
 										},
