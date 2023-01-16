@@ -21,24 +21,28 @@ import {
 } from "@chakra-ui/react";
 import { useBasket } from "../../contexts/BasketContext";
 import { postOrder } from "../../api";
+import { useAuth } from "../../contexts/AuthContext";
 
 function Basket() {
 	const [address, setAddress] = useState("");
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const initialRef = useRef();
-
+	const { loggedIn, user } = useAuth();
 	const { items, removeFromBasket, emptyBasket } = useBasket();
+	console.log('items: ', items);
+
 	const total = items.reduce((acc, obj) => acc + obj.price, 0);
 
-	const handleSubmitForm = async () => {
-		const itemIds = items.map((item) => item._id);
+	const handleSubmitForm = async (addressId) => {
+		console.log('addressId: ', addressId);
+		// const itemproductIds = items.map((item) => item.ProductId);
 
-		const input = {
-			address,
-			items: JSON.stringify(itemIds),
-		};
+		// const input = {
+		// 	address,
+		// 	items: JSON.stringify(itemproductIds),
+		// };
 
-		await postOrder(input);
+		await postOrder(addressId);
 
 		emptyBasket();
 		onClose();
@@ -54,15 +58,15 @@ function Basket() {
 				<>
 					<ul style={{ listStyleType: "decimal" }}>
 						{items.map((item) => (
-							<li key={item._id} style={{ marginBottom: 15 }}>
-								<Link to={`/product/${item._id}`}>
+							<li key={item.ProductId} style={{ marginBottom: 15 }}>
+								<Link to={`/product/${item.ProductId}`}>
 									<Text fontSize="18">
-										{item.title} - {item.price} TL
+										{item.Name} - {item.Price} TL
 									</Text>
 									<Image
 										htmlWidth={200}
 										loading="lazy"
-										src={item.photos[0]}
+										src={item.Pictures.length ? `${process.env.REACT_APP_BASE_ENDPOINT}${item.Pictures[0].Url}` : "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-15.png"}
 										alt="basket item"
 									/>
 								</Link>
@@ -71,7 +75,7 @@ function Basket() {
 									mt="2"
 									size="sm"
 									colorScheme="pink"
-									onClick={() => removeFromBasket(item._id)}
+									onClick={() => removeFromBasket(item.ProductId)}
 								>
 									Remove from basket
 								</Button>
@@ -93,21 +97,28 @@ function Basket() {
 							<ModalHeader>Order</ModalHeader>
 							<ModalCloseButton />
 							<ModalBody pb={6}>
-								<FormControl>
-									<FormLabel>Address</FormLabel>
-									<Textarea
-										ref={initialRef}
-										placeholder="Address"
-										value={address}
-										onChange={(e) => setAddress(e.target.value)}
-									/>
-								</FormControl>
+								{
+									loggedIn ? (
+										<Box>
+											{user.Addresses.map(address => <Box key={address.Id} sx={{ display: "flex", border: "1px solid", padding: "5px", borderRadius: "10px" }} >
+												<Box>
+
+													<Text>{address.Name}</Text>
+													<Text>{address.Address1} / {address.Address1} </Text>
+												</Box>
+												<Button colorScheme="blue" mr={3} p={4} w="-moz-fit-content" h={"-moz-max-content"} onClick={() => handleSubmitForm(address.Id)}>
+													Use 
+												</Button>
+											</Box>)}
+										</Box>
+									) : (
+										<Text> Please login for complate order </Text>
+									)
+								}
 							</ModalBody>
 
 							<ModalFooter>
-								<Button colorScheme="blue" mr={3} onClick={handleSubmitForm}>
-									Save
-								</Button>
+
 								<Button onClick={onClose}>Cancel</Button>
 							</ModalFooter>
 						</ModalContent>

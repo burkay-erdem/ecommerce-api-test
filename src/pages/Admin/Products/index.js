@@ -12,13 +12,40 @@ function Products({ history }) {
 		Description: "",
 		Sku: "",
 		Price: 0,
-		Quantity: 0
+		Quantity: 0,
+		// Picture: ''
 	}
+
+
+	const convertBase64 = (file) => {
+		return new Promise((resolve, reject) => {
+			const fileReader = new FileReader();
+			fileReader.readAsDataURL(file);
+	
+			fileReader.onload = () => {
+				resolve(fileReader.result);
+			};
+	
+			fileReader.onerror = (error) => {
+				reject(error);
+			};
+		});
+	};
+	
+	const uploadImage = async (event) => {
+		const file = event.target.files[0];
+		console.log('file: ', file);
+		const base64 = await convertBase64(file);
+		const type = file.type
+		const pictureBinary = base64.split(',')[1]
+		 
+	};
 	const [productData, setProductData] = useState(productDTO)
 	useEffect(() => {
 		if (params.id) {
 			fetchProduct(params.id).then(res => {
 				delete res.Id
+				delete res.Pictures
 				setProductData(res)
 			})
 		}
@@ -105,7 +132,7 @@ function Products({ history }) {
 					<>
 						{
 							Object.keys(productData).map(fieldKey =>
-								<FormControl>
+								<FormControl key={fieldKey}>
 									<FormLabel>{fieldKey}</FormLabel>
 									<Input
 										name={fieldKey}
@@ -114,8 +141,19 @@ function Products({ history }) {
 									/>
 								</FormControl>
 							)
+
 						}
-						<Button mt="4" mb={3} width="full" type="submit"
+
+						<FormControl FormControl >
+							<FormLabel>Thumbnail</FormLabel>
+							<Input
+								name="Picture"
+								value={productData.Picture}
+								onChange={uploadImage}
+								type="file"
+							/>
+						</FormControl>
+						<Button mt="4" width="full" type="submit"
 							onClick={() => {
 								if (params.action === 'create') {
 									createMutation.mutate(productData, {
@@ -125,7 +163,7 @@ function Products({ history }) {
 									});
 								}
 								if (params.action === 'edit') {
-									editMutation.mutate({ ...productData, id: params.id }, {
+									editMutation.mutate({ ...productData, Id: params.id }, {
 										onSuccess: () => {
 											history.push("/admin/products");
 										},
@@ -135,6 +173,7 @@ function Products({ history }) {
 						>
 							Save
 						</Button>
+						<Link to={`/admin/products`}> <Button mt="4" mb={2} color="red" width="full" type="submit">Cancel </Button> </Link>
 					</>
 				)
 			}
@@ -143,7 +182,7 @@ function Products({ history }) {
 				!params.action &&
 				<Link to={`/admin/products/create`}> <Button mt="4" mb={2} width="full" type="submit">create </Button> </Link>
 			}
-		</div>
+		</div >
 	);
 }
 export default Products;

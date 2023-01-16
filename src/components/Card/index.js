@@ -5,23 +5,19 @@ import { Link } from "react-router-dom";
 import { useBasket } from "../../contexts/BasketContext";
 
 function Card({ item }) {
-	console.log('item: ', item);
-	const { addToBasket, items } = useBasket();
+
+	const { addToBasket, items, removeFromBasket } = useBasket();
 
 	const findBasketItem = items.find(
-		(basket_item) => basket_item.Id === item.Id
+		(basket_item) => basket_item.ProductId === item.Id
 	);
 
 	return (
 		<Box borderWidth="1px" borderRadius="lg" overflow="hidden" p="3">
 			<Link to={`/product/${item.Id}`}>
-				{
-					item.Image 
-					?
-					<Image src={item.Image} alt="product" loading="lazy" />
-					:
-					<Image src="https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-15.png" alt="product" loading="lazy" />
-				}
+
+				<Image src={item.Pictures.length ? `${process.env.REACT_APP_BASE_ENDPOINT}${item.Pictures[0].Url}` : "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-15.png"} alt="product" loading="lazy" />
+
 
 				<Box p="6">
 					<Box d="plex" alignItems="baseline">
@@ -38,7 +34,7 @@ function Card({ item }) {
 			<Button
 				colorScheme={findBasketItem ? "pink" : "green"}
 				variant="solid"
-				onClick={() => addToBasket(item, findBasketItem)}
+				onClick={() =>findBasketItem ? removeFromBasket(item.Id) : addToBasket(item)}
 			>
 				{findBasketItem ? "Remove from basket" : "Add to basket"}
 			</Button>

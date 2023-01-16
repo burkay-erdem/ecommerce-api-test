@@ -1,6 +1,7 @@
 import { useAuth } from "../../contexts/AuthContext";
 
-import { Text, Button } from "@chakra-ui/react";
+import { Text, Button, Box } from "@chakra-ui/react";
+
 
 function Profile({ history }) {
 	const { user, logout } = useAuth();
@@ -18,9 +19,31 @@ function Profile({ history }) {
 			{
 				user && <>
 					<Text fontSize="22">{user.FirstName} {user.LastName}  </Text>
-					<code>{JSON.stringify(user)}</code>
+					<Box ml={4}>
+						<Text fontSize="22" >Address :</Text>
+						<Box ml={3}>
+							{
+								user.Addresses.map((address, index) => {
+									delete address.Id
+									return (
+										<Box key={index}>
+											{Object.keys(address).map(key =>
+												<Box key={key}>
+													<Text fontSize="22" >{key} : {address[key]} </Text>
+												</Box>
+											)}
+										</Box>
+									)
+								})
+
+							}
+
+						</Box>
+					</Box>
+					{/* <code>{JSON.stringify(user)}</code> */}
 				</>
 			}
+
 
 
 			<br />

@@ -1,4 +1,5 @@
 import { useState, createContext, useContext, useEffect } from "react";
+import { fetchBasket, postBasket } from "../api";
 
 const BasketContext = createContext();
 
@@ -8,24 +9,41 @@ const BasketProvider = ({ children }) => {
 	const [items, setItems] = useState(defaultBasket);
 
 	useEffect(() => {
+
 		localStorage.setItem("basket", JSON.stringify(items));
+
 	}, [items]);
 
-	const addToBasket = (data, findBasketItem) => {
-		if (!findBasketItem) {
-			return setItems((items) => [data, ...items]);
-		}
+	const addToBasket = async (data) => {
+		console.log('data: ', data);
 
-		const filtered = items.filter((item) => item._id !== findBasketItem._id);
-		setItems(filtered);
+
+		// if (!findBasketItem) {
+		// 	return setItems((items) => [data, ...items]);
+		// }
+		// const filtered = items.filter((item) => item.Id !== findBasketItem.Id);
+		// setItems(filtered);
+		await postBasket({ productId: data.Id, quantity: 1 })
+		const { Items } = await fetchBasket()
+		setItems(Items);
 	};
 
-	const removeFromBasket = (item_id) => {
-		const filtered = items.filter((item) => item._id !== item_id);
-		setItems(filtered);
+	const removeFromBasket = async (itemId) => {
+		console.log('itemId: ', itemId);
+
+		// const filtered = items.filter((item) => item.Id !== itemId);
+		// setItems(filtered);
+
+		await postBasket({ productId: itemId, quantity: 0 })
+		const { Items } = await fetchBasket()
+		setItems(Items);
 	};
 
-	const emptyBasket = () => setItems([]);
+	const emptyBasket = () => {
+		items.forEach(item => {
+		});
+		setItems([])
+	};
 
 	const values = {
 		items,
