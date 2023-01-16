@@ -31,6 +31,8 @@ function Admin() {
 				<Switch>
 					<Route exact path={path} component={Home} />
 					<Route path={`${path}/orders`} component={Orders} />
+					<Route path={`${path}/products/:action/:id`} component={Products} />
+					<Route path={`${path}/products/:action`} component={Products} />
 					<Route path={`${path}/products`} component={Products} />
 				</Switch>
 			</Box>

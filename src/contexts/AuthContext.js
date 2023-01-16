@@ -22,13 +22,15 @@ const AuthProvider = ({ children }) => {
 				setLoading(false);
 			}
 		})();
-	}, []);
+	}, [loggedIn]);
 
+
+ 
 	const login = (data) => {
 		setLoggedIn(true);
 		//setUser(data.user);
 		// TODO login de kullanıcı bilgisi gelmiyor
-		setUser(data.Token);
+		//setUser(data.Token);
 
 		localStorage.setItem("access-token", data.Token);
 

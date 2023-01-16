@@ -45,7 +45,7 @@ function Navbar() {
 							</Link>
 						)}
 
-						{user?.role === "admin" && (
+						{user?.Roles.find(f => f === "admin") && (
 							<Link to="/admin">
 								<Button colorScheme="pink" variant="ghost">
 									Admin

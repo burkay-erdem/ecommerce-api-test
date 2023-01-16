@@ -1,5 +1,4 @@
-import axios from "axios";
-
+import axios from "axios"; 
 axios.interceptors.request.use(
 	function (config) {
 		const { origin } = new URL(config.url);
@@ -8,8 +7,9 @@ axios.interceptors.request.use(
 		const token = localStorage.getItem("access-token");
 
 		if (allowedOrigins.includes(origin)) {
-			config.headers.authorization = token;
+			config.headers.authorization = "Bearer " + token;
 		}
+		config.headers['Content-Type'] = 'application/json' ;
 
 		return config;
 	},
@@ -21,7 +21,7 @@ axios.interceptors.request.use(
 
 export const fetchProductList = async ({ pageParam = 1 }) => {
 	const { data } = await axios.get(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/product?page=${pageParam}`
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product?page=${pageParam}`
 	);
 
 	return data;
@@ -29,7 +29,7 @@ export const fetchProductList = async ({ pageParam = 1 }) => {
 
 export const fetchProduct = async (id) => {
 	const { data } = await axios.get(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/product/${id}`
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product/${id}`
 	);
 
 	return data;
@@ -46,7 +46,7 @@ export const fetchRegister = async (input) => {
 
 export const fetchLogin = async (input) => {
 	const { data } = await axios.post(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/Token/Create`,
+		`${process.env.REACT_APP_BASE_ENDPOINT}/Api/Token/Create`,
 		input
 	);
 
@@ -54,8 +54,9 @@ export const fetchLogin = async (input) => {
 };
 
 export const fetchMe = async () => {
+
 	const { data } = await axios.get(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/auth/me`
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Me`
 	);
 	return data;
 };
@@ -73,7 +74,7 @@ export const fetchLogout = async () => {
 
 export const postOrder = async (input) => {
 	const { data } = await axios.post(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/order`,
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/order`,
 		input
 	);
 
@@ -82,7 +83,7 @@ export const postOrder = async (input) => {
 
 export const fetchOrders = async () => {
 	const { data } = await axios.get(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/order`
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/order`
 	);
 
 	return data;
@@ -90,8 +91,25 @@ export const fetchOrders = async () => {
 
 export const deleteProduct = async (product_id) => {
 	const { data } = await axios.delete(
-		`${process.env.REACT_APP_BASE_ENDPOINT}/product/${product_id}`
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product?key=${product_id}`
 	);
 
 	return data;
 };
+
+export const createProduct = async (postData) => {
+	const { data } = await axios.post(
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product`,
+		JSON.stringify(postData)
+	);
+
+	return data;
+};
+export const editProduct = async (postData) => {
+	const { data } = await axios.post(
+		`${process.env.REACT_APP_BASE_ENDPOINT}/odata/Product`,
+		JSON.stringify(postData)
+	);
+	return data;
+};
+

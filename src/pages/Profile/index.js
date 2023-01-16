@@ -6,6 +6,7 @@ function Profile({ history }) {
 	const { user, logout } = useAuth();
 
 	const handleLogout = async () => {
+		localStorage.clear();
 		logout(() => {
 			history.push("/");
 		});
@@ -14,7 +15,13 @@ function Profile({ history }) {
 	return (
 		<div>
 			<Text fontSize="22">Profile</Text>
-			<code>{JSON.stringify(user)}</code>
+			{
+				user && <>
+					<Text fontSize="22">{user.FirstName} {user.LastName}  </Text>
+					<code>{JSON.stringify(user)}</code>
+				</>
+			}
+
 
 			<br />
 			<br />

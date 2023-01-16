@@ -17,15 +17,15 @@ function Products() {
 	} = useInfiniteQuery("products", fetchProductList, {
 		getNextPageParam: (lastGroup, allGroups) => {
 			const morePagesExist = lastGroup?.length === 12;
-
+			
 			if (!morePagesExist) {
 				return;
 			}
-
+			
 			return allGroups.length + 1;
 		},
 	});
-
+	 
 	if (status === "loading") return "Loading...";
 
 	if (status === "error") return "An error has occurred: " + error.message;
@@ -36,7 +36,7 @@ function Products() {
 				{data.pages.map((group, i) => (
 					<React.Fragment key={i}>
 						{group.map((item) => (
-							<Box w="100%" key={item._id}>
+							<Box w="100%" key={item.Id}> 
 								<Card item={item} />
 							</Box>
 						))}
