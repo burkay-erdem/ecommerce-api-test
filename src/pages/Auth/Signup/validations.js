@@ -9,10 +9,7 @@ const validations = yup.object().shape({
 		.string()
 		.min(5, "Parolanız en az 5 karakter olmalıdır")
 		.required(),
-	passwordConfirm: yup
-		.string()
-		.oneOf([yup.ref("password")], "Parolalar uyuşmuyor.")
-		.required(),
+ 
 });
 
 export default validations;

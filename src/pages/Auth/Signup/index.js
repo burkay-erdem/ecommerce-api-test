@@ -23,8 +23,7 @@ function Signup({ history }) {
 	const formik = useFormik({
 		initialValues: {
 			email: "",
-			password: "",
-			passwordConfirm: "",
+			password: "", 
 		},
 		validationSchema,
 		onSubmit: async (values, bag) => {
@@ -81,20 +80,7 @@ function Signup({ history }) {
 								/>
 							</FormControl>
 
-							<FormControl mt="4">
-								<FormLabel>Password Confirm</FormLabel>
-								<Input
-									name="passwordConfirm"
-									type="password"
-									onChange={formik.handleChange}
-									onBlur={formik.handleBlur}
-									value={formik.values.passwordConfirm}
-									isInvalid={
-										formik.touched.passwordConfirm &&
-										formik.errors.passwordConfirm
-									}
-								/>
-							</FormControl>
+						 
 
 							<Button mt="4" width="full" type="submit">
 								Sign Up
